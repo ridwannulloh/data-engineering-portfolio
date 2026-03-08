@@ -60,46 +60,10 @@ I am a passionate Data Engineer with experience in designing, building, and main
 
 ---
 
-### Project 2: [Project Name]
-**Description:** Brief description of what the project does and the problem it solves.
-
-**Technologies:** Airflow, dbt, Snowflake, PostgreSQL
-
-**Key Features:**
-- Feature 1
-- Feature 2
-- Feature 3
-
-**[View Project →](link-to-project)**
-
----
-
-### Project 3: [Project Name]
-**Description:** Brief description of what the project does and the problem it solves.
-
-**Technologies:** Kafka, Python, Docker, GCP BigQuery
-
-**Key Features:**
-- Feature 1
-- Feature 2
-- Feature 3
-
-**[View Project →](link-to-project)**
-
----
-
-## 🏆 Achievements
-
-- Certification or achievement 1
-- Certification or achievement 2
-- Certification or achievement 3
-
 ## 📫 Contact
 
-- **LinkedIn:** [Your LinkedIn Profile](https://linkedin.com/in/yourprofile)
-- **Email:** your.email@example.com
+- **LinkedIn:** [linkedin.com/in/ridwannulloh](https://linkedin.com/in/ridwannulloh)
 - **GitHub:** [github.com/ridwannulloh](https://github.com/ridwannulloh)
-- **Portfolio Website:** [your-website.com](https://your-website.com)
 
 ## 📄 License
 

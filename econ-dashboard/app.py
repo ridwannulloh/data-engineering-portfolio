@@ -146,8 +146,8 @@ with st.sidebar:
 
     st.markdown("---")
     all_countries = sorted(df["country_name"].unique().tolist())
-    # Default to 4 countries for cleaner dashboard display
-    default_countries = ["United States", "Germany", "Japan", "Indonesia"]
+    # Default to all G7 + Indonesia (8 countries)
+    default_countries = G7_PLUS_INDONESIA
     selected_countries = st.multiselect(
         "Countries",
         all_countries,
@@ -182,9 +182,9 @@ if filtered.empty:
     st.stop()
 
 latest_year  = int(filtered["year"].max())
-latest_data  = filtered[filtered["year"] == latest_year]
+latest_data  = filtered[filtered["year"] == latest_year].drop_duplicates(subset=["country_name"])
 prev_year    = latest_year - 1
-prev_data    = filtered[filtered["year"] == prev_year]
+prev_data    = filtered[filtered["year"] == prev_year].drop_duplicates(subset=["country_name"])
 
 # ── KPI Cards ─────────────────────────────────────────────────────────────────
 st.markdown(f'<div class="section-header">{selected_meta["icon"]} {selected_meta["label"]} — {latest_year} Snapshot</div>', unsafe_allow_html=True)

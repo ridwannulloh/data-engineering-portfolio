@@ -146,10 +146,12 @@ with st.sidebar:
 
     st.markdown("---")
     all_countries = sorted(df["country_name"].unique().tolist())
+    # Default to 4 countries for cleaner dashboard display
+    default_countries = ["United States", "Germany", "Japan", "Indonesia"]
     selected_countries = st.multiselect(
         "Countries",
         all_countries,
-        default=all_countries,
+        default=[c for c in default_countries if c in all_countries],
     )
 
     st.markdown("---")

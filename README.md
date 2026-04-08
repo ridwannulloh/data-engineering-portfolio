@@ -60,6 +60,25 @@ I am a passionate Data Engineer with experience in designing, building, and main
 
 ---
 
+### Project 2: Olist E-Commerce ETL Pipeline
+**Description:** End-to-end batch data pipeline on the Brazilian Olist e-commerce dataset implementing Medallion Architecture (Bronze → Silver → Gold). Ingests 100k+ orders across 8 source tables, applies multi-table joins and cleaning in PySpark, and produces three analytical gold tables covering customer RFM segmentation, monthly revenue trends, and category performance. Fully containerised with Docker Compose and orchestrated via Apache Airflow. Dataset is auto-downloaded from Kaggle at runtime via kagglehub.
+
+**Technologies:** Python, PySpark, Delta Lake, Apache Airflow, Docker, DuckDB, kagglehub
+
+**Key Features:**
+- Medallion Architecture (Bronze → Silver → Gold) with Delta Lake storage
+- Automated Kaggle dataset ingestion via `kagglehub` — no manual download needed
+- Customer RFM segmentation (Champions, Loyal Customers, At Risk, Lost, etc.)
+- Monthly GMV trends and category performance analytics
+- Containerised stack: Airflow scheduler + webserver + PostgreSQL in Docker Compose
+- DuckDB + DBeaver integration for ad-hoc SQL querying on gold layer outputs
+- Airflow DAG with retry logic and daily scheduling (02:00 UTC)
+- pytest unit tests for Silver transformation logic
+
+**[View Project →](./olist-etl-pipeline)**
+
+---
+
 ## 📫 Contact
 
 - **LinkedIn:** [linkedin.com/in/ridwannulloh](https://linkedin.com/in/ridwannulloh)

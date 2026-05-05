@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ profile.name }} — {{ profile.title }}</title>
+  <link rel="icon" type="image/png" href="/static/img/favicon.png" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/static/css/style.css" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: "#0f172a",
+            accent:  "#38bdf8",
+          },
+          fontFamily: {
+            sans: ["Inter", "sans-serif"],
+          },
+        },
+      },
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body class="bg-primary text-slate-200 font-sans antialiased">
+
+  <!-- Navbar -->
+  <nav class="fixed top-0 inset-x-0 z-50 bg-primary/80 backdrop-blur border-b border-slate-800">
+    <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+      <span class="font-bold text-accent text-lg tracking-tight">{{ profile.name }}</span>
+      <ul class="flex gap-6 text-sm font-medium text-slate-400">
+        <li><a href="#about"      class="hover:text-accent transition-colors">About</a></li>
+        <li><a href="#experience" class="hover:text-accent transition-colors">Experience</a></li>
+        <li><a href="#skills"     class="hover:text-accent transition-colors">Skills</a></li>
+        <li><a href="#services"   class="hover:text-accent transition-colors">Services</a></li>
+        <li><a href="#projects"   class="hover:text-accent transition-colors">Projects</a></li>
+        <li><a href="#contact"    class="hover:text-accent transition-colors">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Page content -->
+  {% block content %}{% endblock %}
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-800 py-8 text-center text-slate-500 text-sm">
+    <p>Built with FastAPI &amp; TailwindCSS &mdash; &copy; 2026 {{ profile.name }}</p>
+  </footer>
+
+  <!-- Scroll-triggered fade-in animation -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('fade-visible');
+            }
+          });
+        },
+        { threshold: 0.08 }
+      );
+      document.querySelectorAll('.fade-section').forEach((el) => observer.observe(el));
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,68 @@
+/* ── Custom utilities not covered by Tailwind CDN ── */
+
+/* Smooth scroll offset for fixed navbar */
+html {
+  scroll-padding-top: 72px;
+}
+
+/* Section title reusable style */
+.section-title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #fff;
+  position: relative;
+  display: inline-block;
+}
+
+.section-title::after {
+  content: "";
+  display: block;
+  width: 48px;
+  height: 3px;
+  background: #38bdf8;
+  margin-top: 10px;
+  border-radius: 2px;
+}
+
+/* Stat badges */
+.stat-badge {
+  padding: 0.375rem 1rem;
+  background-color: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  color: #cbd5e1;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #38bdf8;
+}
+
+/* Scroll-triggered fade-in animation */
+.fade-section {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.fade-section.fade-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Hero loads immediately */
+#hero {
+  opacity: 1;
+  transform: translateY(0);
+}

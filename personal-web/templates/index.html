@@ -1,0 +1,278 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- ───── HERO ───── -->
+<section id="hero" class="fade-section min-h-screen flex items-center justify-center pt-20">
+  <div class="max-w-3xl mx-auto px-6 text-center">
+    <p class="text-accent font-semibold tracking-widest text-sm uppercase mb-4">Hello, I'm</p>
+    <h1 class="text-5xl sm:text-6xl font-bold text-white mb-4">{{ profile.name }}</h1>
+    <h2 class="text-2xl sm:text-3xl font-light text-slate-400 mb-2">{{ profile.title }}</h2>
+    <p class="text-slate-500 text-sm mb-6">📍 {{ profile.location }}</p>
+    <p class="text-slate-400 text-lg leading-relaxed max-w-xl mx-auto mb-10">
+      {{ profile.tagline }}
+    </p>
+    <div class="flex flex-wrap justify-center gap-4">
+      <a href="#projects"
+         class="px-6 py-3 bg-accent text-primary font-semibold rounded-lg hover:bg-sky-400 transition-colors">
+        View Projects
+      </a>
+      <a href="#contact"
+         class="px-6 py-3 border border-slate-600 text-slate-300 font-semibold rounded-lg hover:border-accent hover:text-accent transition-colors">
+        Contact Me
+      </a>
+    </div>
+
+    <!-- Social links -->
+    <div class="flex justify-center gap-6 mt-10 text-slate-500">
+      <a href="{{ profile.github }}" target="_blank" rel="noopener noreferrer"
+         class="hover:text-accent transition-colors flex items-center gap-2 text-sm">
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 .5C5.73.5.5 5.73.5 12c0 5.08 3.29 9.38 7.86 10.9.57.1.78-.25.78-.55v-1.93c-3.19.69-3.87-1.54-3.87-1.54-.52-1.33-1.28-1.68-1.28-1.68-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.76 2.7 1.25 3.36.96.1-.75.4-1.25.73-1.54-2.55-.29-5.23-1.27-5.23-5.67 0-1.25.44-2.27 1.17-3.07-.12-.29-.51-1.46.11-3.04 0 0 .96-.31 3.14 1.17a10.9 10.9 0 0 1 2.86-.38c.97 0 1.95.13 2.86.38 2.18-1.48 3.13-1.17 3.13-1.17.63 1.58.23 2.75.11 3.04.73.8 1.17 1.82 1.17 3.07 0 4.41-2.69 5.38-5.25 5.66.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.79.55A11.52 11.52 0 0 0 23.5 12C23.5 5.73 18.27.5 12 .5z"/>
+        </svg>
+        GitHub
+      </a>
+      <a href="{{ profile.linkedin }}" target="_blank" rel="noopener noreferrer"
+         class="hover:text-accent transition-colors flex items-center gap-2 text-sm">
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.44-2.14 2.94v5.67H9.36V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zm1.78 13.02H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/>
+        </svg>
+        LinkedIn
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ───── ABOUT ───── -->
+<section id="about" class="fade-section py-24 border-t border-slate-800">
+  <div class="max-w-4xl mx-auto px-6">
+    <h3 class="section-title">About Me</h3>
+    <div class="mt-8 grid md:grid-cols-3 gap-10 items-center">
+      <!-- Profile image: place your photo at static/img/profile.jpg -->
+      <div class="flex justify-center">
+        <img
+          src="/static/img/profile.jpg"
+          alt="Photo of {{ profile.name }}"
+          class="w-48 h-48 rounded-full object-cover border-2 border-accent shadow-lg shadow-accent/10"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+        />
+        <!-- Fallback if image not found -->
+        <div class="w-48 h-48 rounded-full bg-slate-800 border-2 border-accent items-center justify-center text-6xl select-none" style="display:none;">
+          👤
+        </div>
+      </div>
+      <!-- Bio -->
+      <div class="md:col-span-2 text-slate-400 leading-relaxed space-y-4">
+        <p>{{ profile.about }}</p>
+        <div class="flex flex-wrap gap-3 pt-2">
+          <span class="stat-badge">📍 {{ profile.location }}</span>
+          <span class="stat-badge">💼 6+ Years in Data</span>
+          <span class="stat-badge">🎓 Economics — GPA {{ education.gpa }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───── EXPERIENCE ───── -->
+<section id="experience" class="fade-section py-24 border-t border-slate-800">
+  <div class="max-w-4xl mx-auto px-6">
+    <h3 class="section-title">Experience</h3>
+    <div class="mt-10 relative">
+      <!-- Timeline line -->
+      <div class="absolute left-4 top-0 bottom-0 w-0.5 bg-slate-700 hidden md:block"></div>
+
+      {% for job in experience %}
+      <div class="relative md:pl-14 mb-12 last:mb-0">
+        <!-- Timeline dot -->
+        <div class="absolute left-2.5 top-1 w-3 h-3 rounded-full bg-accent border-2 border-primary hidden md:block"></div>
+
+        <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-6 hover:border-accent/50 transition-colors">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3">
+            <div>
+              <h4 class="text-lg font-bold text-white">{{ job.role }}</h4>
+              <p class="text-accent font-medium text-sm">{{ job.company }} <span class="text-slate-500">· {{ job.location }}</span></p>
+            </div>
+            <span class="text-slate-500 text-sm mt-1 sm:mt-0 font-mono">{{ job.period }}</span>
+          </div>
+          <ul class="space-y-2 mt-3">
+            {% for bullet in job.bullets %}
+            <li class="flex items-start gap-2 text-slate-400 text-sm leading-relaxed">
+              <span class="text-accent mt-1 shrink-0">▸</span>
+              {{ bullet }}
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+      {% endfor %}
+
+      <!-- Education -->
+      <div class="relative md:pl-14">
+        <div class="absolute left-2.5 top-1 w-3 h-3 rounded-full bg-slate-500 border-2 border-primary hidden md:block"></div>
+        <div class="bg-slate-800/30 border border-slate-700 rounded-xl p-6">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h4 class="text-lg font-bold text-white">{{ education.degree }}</h4>
+              <p class="text-slate-400 text-sm">{{ education.university }} · {{ education.location }}</p>
+            </div>
+            <div class="text-right mt-1 sm:mt-0">
+              <span class="text-slate-500 text-sm font-mono">{{ education.period }}</span>
+              <p class="text-accent text-sm font-semibold">GPA {{ education.gpa }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───── SKILLS ───── -->
+<section id="skills" class="fade-section py-24 border-t border-slate-800">
+  <div class="max-w-4xl mx-auto px-6">
+    <h3 class="section-title">Skills &amp; Technologies</h3>
+    <div class="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {% for group in skills %}
+      <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-5 hover:border-accent/50 transition-colors">
+        <h4 class="text-accent font-semibold mb-3 text-sm uppercase tracking-wider">{{ group["category"] }}</h4>
+        <div class="flex flex-wrap gap-2">
+          {% for item in group["items"] %}
+          <span class="px-3 py-1 bg-slate-700 rounded-full text-slate-300 text-xs font-medium">{{ item }}</span>
+          {% endfor %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ───── SERVICES ───── -->
+<section id="services" class="fade-section py-24 border-t border-slate-800">
+  <div class="max-w-5xl mx-auto px-6">
+    <h3 class="section-title">What I Can Do For You</h3>
+    <p class="text-slate-400 mt-4 max-w-2xl leading-relaxed">
+      From raw data to reliable insights — here's how I help clients build robust, scalable data systems.
+    </p>
+    <div class="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+      <!-- Service 1 -->
+      <div class="bg-slate-800/50 border border-slate-700 rounded-2xl p-6 hover:border-accent/50 transition-colors group">
+        <div class="text-3xl mb-4">🔧</div>
+        <h4 class="text-white font-bold text-lg mb-2 group-hover:text-accent transition-colors">Data Pipeline Development</h4>
+        <p class="text-slate-400 text-sm leading-relaxed">
+          Design and build reliable ETL/ELT pipelines — batch or streaming — that move, transform, and load data from any source to any destination with minimal latency and zero data loss.
+        </p>
+      </div>
+
+      <!-- Service 2 -->
+      <div class="bg-slate-800/50 border border-slate-700 rounded-2xl p-6 hover:border-accent/50 transition-colors group">
+        <div class="text-3xl mb-4">🏗️</div>
+        <h4 class="text-white font-bold text-lg mb-2 group-hover:text-accent transition-colors">Data Warehouse Design</h4>
+        <p class="text-slate-400 text-sm leading-relaxed">
+          Architect cloud data warehouses (BigQuery, Redshift, Snowflake) with proper dimensional modeling, partitioning strategies, and cost-optimised schemas that scale with your business.
+        </p>
+      </div>
+
+      <!-- Service 3 -->
+      <div class="bg-slate-800/50 border border-slate-700 rounded-2xl p-6 hover:border-accent/50 transition-colors group">
+        <div class="text-3xl mb-4">⚡</div>
+        <h4 class="text-white font-bold text-lg mb-2 group-hover:text-accent transition-colors">Real-time Data Streaming</h4>
+        <p class="text-slate-400 text-sm leading-relaxed">
+          Implement event-driven architectures using Apache Kafka and Spark Streaming to process millions of events per second — enabling real-time dashboards, fraud detection, and live analytics.
+        </p>
+      </div>
+
+      <!-- Service 4 -->
+      <div class="bg-slate-800/50 border border-slate-700 rounded-2xl p-6 hover:border-accent/50 transition-colors group">
+        <div class="text-3xl mb-4">☁️</div>
+        <h4 class="text-white font-bold text-lg mb-2 group-hover:text-accent transition-colors">Cloud Data Infrastructure</h4>
+        <p class="text-slate-400 text-sm leading-relaxed">
+          Set up and manage end-to-end data infrastructure on AWS, GCP, or Azure — including data lakes, compute clusters, IAM policies, and infrastructure-as-code with Terraform or Pulumi.
+        </p>
+      </div>
+
+      <!-- Service 5 -->
+      <div class="bg-slate-800/50 border border-slate-700 rounded-2xl p-6 hover:border-accent/50 transition-colors group">
+        <div class="text-3xl mb-4">📊</div>
+        <h4 class="text-white font-bold text-lg mb-2 group-hover:text-accent transition-colors">Analytics Engineering</h4>
+        <p class="text-slate-400 text-sm leading-relaxed">
+          Transform raw warehouse data into clean, documented, and tested data models using dbt — connecting business logic directly to BI tools like Metabase, Looker, or Power BI.
+        </p>
+      </div>
+
+      <!-- Service 6 -->
+      <div class="bg-slate-800/50 border border-slate-700 rounded-2xl p-6 hover:border-accent/50 transition-colors group">
+        <div class="text-3xl mb-4">🛡️</div>
+        <h4 class="text-white font-bold text-lg mb-2 group-hover:text-accent transition-colors">Data Quality &amp; Observability</h4>
+        <p class="text-slate-400 text-sm leading-relaxed">
+          Embed automated data quality checks, freshness monitoring, and anomaly alerting into your pipelines — so your team always trusts the numbers and issues surface before they hit reports.
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ───── PROJECTS ───── -->
+<section id="projects" class="fade-section py-24 border-t border-slate-800">
+  <div class="max-w-5xl mx-auto px-6">
+    <h3 class="section-title">Projects</h3>
+    <div class="mt-10 grid md:grid-cols-2 gap-8">
+      {% for project in projects %}
+      <div class="bg-slate-800/50 border border-slate-700 rounded-2xl p-7 flex flex-col gap-5 hover:border-accent/50 transition-colors group">
+        <div>
+          <h4 class="text-xl font-bold text-white group-hover:text-accent transition-colors mb-2">
+            {{ project.title }}
+          </h4>
+          <p class="text-slate-400 text-sm leading-relaxed">{{ project.description }}</p>
+        </div>
+
+        <ul class="space-y-1">
+          {% for h in project.highlights %}
+          <li class="flex items-start gap-2 text-slate-400 text-sm">
+            <span class="text-accent mt-0.5">✦</span>
+            {{ h }}
+          </li>
+          {% endfor %}
+        </ul>
+
+        <div class="flex flex-wrap gap-2 mt-auto">
+          {% for tech in project.tech %}
+          <span class="px-2.5 py-0.5 bg-slate-700 text-accent text-xs rounded-full font-medium">{{ tech }}</span>
+          {% endfor %}
+        </div>
+
+        <a href="{{ project.github }}" target="_blank" rel="noopener noreferrer"
+           class="inline-flex items-center gap-2 text-accent text-sm font-semibold hover:underline mt-1">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 .5C5.73.5.5 5.73.5 12c0 5.08 3.29 9.38 7.86 10.9.57.1.78-.25.78-.55v-1.93c-3.19.69-3.87-1.54-3.87-1.54-.52-1.33-1.28-1.68-1.28-1.68-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.76 2.7 1.25 3.36.96.1-.75.4-1.25.73-1.54-2.55-.29-5.23-1.27-5.23-5.67 0-1.25.44-2.27 1.17-3.07-.12-.29-.51-1.46.11-3.04 0 0 .96-.31 3.14 1.17a10.9 10.9 0 0 1 2.86-.38c.97 0 1.95.13 2.86.38 2.18-1.48 3.13-1.17 3.13-1.17.63 1.58.23 2.75.11 3.04.73.8 1.17 1.82 1.17 3.07 0 4.41-2.69 5.38-5.25 5.66.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.79.55A11.52 11.52 0 0 0 23.5 12C23.5 5.73 18.27.5 12 .5z"/>
+          </svg>
+          View on GitHub
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ───── CONTACT ───── -->
+<section id="contact" class="fade-section py-24 border-t border-slate-800">
+  <div class="max-w-2xl mx-auto px-6 text-center">
+    <h3 class="section-title">Get In Touch</h3>
+    <p class="text-slate-400 mt-4 leading-relaxed">
+      I'm currently open to new opportunities. Whether you have a question, a project proposal,
+      or just want to connect — feel free to reach out!
+    </p>
+    <a href="mailto:{{ profile.email }}"
+       class="inline-block mt-8 px-8 py-4 bg-accent text-primary font-bold rounded-xl hover:bg-sky-400 transition-colors text-lg">
+      Say Hello 👋
+    </a>
+    <div class="flex justify-center gap-8 mt-10 text-slate-500">
+      <a href="{{ profile.github }}"   target="_blank" rel="noopener noreferrer" class="hover:text-accent transition-colors text-sm">GitHub</a>
+      <a href="{{ profile.linkedin }}" target="_blank" rel="noopener noreferrer" class="hover:text-accent transition-colors text-sm">LinkedIn</a>
+      <a href="mailto:{{ profile.email }}" class="hover:text-accent transition-colors text-sm">Email</a>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

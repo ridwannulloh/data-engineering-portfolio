@@ -1,0 +1,16 @@
+services:
+  web:
+    build: .
+    container_name: personal-web
+    ports:
+      - "8000:8000"
+    volumes:
+      # Hot-reload: mount source so changes reflect without rebuilding
+      - ./app.py:/app/app.py
+      - ./templates:/app/templates
+      - ./static:/app/static
+    command: ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+    environment:
+      - PYTHONDONTWRITEBYTECODE=1
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped

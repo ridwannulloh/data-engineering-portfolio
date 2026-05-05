@@ -44,7 +44,25 @@ I am a passionate Data Engineer with experience in designing, building, and main
 
 ## 📂 Projects
 
-### Project 1: Global Economic Indicators Dashboard
+### Project 1: LogiStream — Real-Time Supply Chain Streaming Pipeline
+**Description:** Production-grade real-time streaming pipeline that tracks shipment events across carriers and warehouses, detects SLA breaches, and surfaces delay alerts via a REST API. Events flow from a synthetic Kafka producer through Spark Structured Streaming into a Delta Lake Medallion Architecture, then served by FastAPI. Fully containerised — one `docker-compose up --build` starts the entire pipeline with zero manual steps.
+
+**Technologies:** Apache Kafka, PySpark 3.5, Spark Structured Streaming, Delta Lake, FastAPI, Apache Airflow, Docker Compose
+
+**Key Features:**
+- 3 Kafka topics (shipment-events, carrier-updates, warehouse-ops) with stateful synthetic producer
+- Spark Structured Streaming with schema enforcement, deduplication, watermarking
+- Medallion Architecture: Bronze (raw) → Silver (SLA-enriched) → Gold (carrier KPIs + alerts)
+- Configurable SLA thresholds per service tier (Standard 48h / Express 24h / Overnight 12h)
+- FastAPI alert service with interactive Swagger UI at `/api/docs`
+- Hourly Airflow DAG for OPTIMIZE, ZORDER, VACUUM maintenance
+- 12 pytest tests covering transforms, producer state machine, and API endpoints
+
+**[View Project →](./logistream)**
+
+---
+
+### Project 2: Global Economic Indicators Dashboard
 **Description:** Live end-to-end data pipeline that fetches economic indicators from the World Bank API, stores data in BigQuery, and displays interactive visualizations through a Streamlit dashboard deployed on GCP Cloud Run. Features automated monthly data ingestion via Cloud Scheduler.
 
 **Technologies:** Python, BigQuery, Streamlit, Docker, GCP Cloud Run, Cloud Scheduler, GitHub Actions
@@ -60,7 +78,7 @@ I am a passionate Data Engineer with experience in designing, building, and main
 
 ---
 
-### Project 2: Olist E-Commerce ETL Pipeline
+### Project 3: Olist E-Commerce ETL Pipeline
 **Description:** End-to-end batch data pipeline on the Brazilian Olist e-commerce dataset implementing Medallion Architecture (Bronze → Silver → Gold). Ingests 100k+ orders across 8 source tables, applies multi-table joins and cleaning in PySpark, and produces three analytical gold tables covering customer RFM segmentation, monthly revenue trends, and category performance. Fully containerised with Docker Compose and orchestrated via Apache Airflow. Dataset is auto-downloaded from Kaggle at runtime via kagglehub.
 
 **Technologies:** Python, PySpark, Delta Lake, Apache Airflow, Docker, DuckDB, kagglehub

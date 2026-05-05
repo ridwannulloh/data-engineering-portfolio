@@ -1,0 +1,106 @@
+services:
+
+  # ── Infrastructure ────────────────────────────────────────────────────────────
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.6.0
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: confluentinc/cp-kafka:7.6.0
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"   # host access (scripts, local dev)
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      # Two listeners: internal (Docker network) + external (host machine)
+      KAFKA_LISTENERS: PLAINTEXT_INTERNAL://0.0.0.0:29092,PLAINTEXT_EXTERNAL://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT_INTERNAL://kafka:29092,PLAINTEXT_EXTERNAL://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT_INTERNAL:PLAINTEXT,PLAINTEXT_EXTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT_INTERNAL
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
+      KAFKA_LOG_RETENTION_HOURS: 24
+    healthcheck:
+      test: ["CMD-SHELL", "kafka-topics --bootstrap-server localhost:9092 --list 2>/dev/null || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 40s
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    depends_on:
+      kafka:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: logistream
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092  # internal Docker hostname
+
+  # ── Application services ──────────────────────────────────────────────────────
+
+  init:
+    build: .
+    command: python scripts/create_topics.py
+    depends_on:
+      kafka:
+        condition: service_healthy
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+    restart: "no"   # run once, then exit
+
+  producer:
+    build: .
+    command: python ingest/producer.py --rate 5
+    depends_on:
+      init:
+        condition: service_completed_successfully
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+    restart: on-failure
+
+  spark:
+    build: .
+    command: python spark/streaming_job.py
+    depends_on:
+      init:
+        condition: service_completed_successfully
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      DELTA_BRONZE_PATH: /data/delta/bronze
+      DELTA_SILVER_PATH: /data/delta/silver
+      DELTA_GOLD_PATH:   /data/delta/gold
+      SPARK_CHECKPOINT_PATH: /data/checkpoints
+      SPARK_MASTER: local[*]
+    ports:
+      - "4040:4040"   # Spark UI
+    volumes:
+      - delta-data:/data
+    restart: on-failure
+
+  api:
+    build: .
+    command: uvicorn api.main:app --host 0.0.0.0 --port 8000
+    depends_on:
+      - spark
+    ports:
+      - "8000:8000"
+    environment:
+      DELTA_BRONZE_PATH: /data/delta/bronze
+      DELTA_SILVER_PATH: /data/delta/silver
+      DELTA_GOLD_PATH:   /data/delta/gold
+    volumes:
+      - delta-data:/data   # shared with spark so API reads Spark-written Delta tables
+    restart: unless-stopped
+
+volumes:
+  delta-data:   # shared Delta Lake storage between spark and api
+

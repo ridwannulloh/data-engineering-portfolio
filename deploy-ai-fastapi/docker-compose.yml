@@ -1,0 +1,11 @@
+services:
+  stock-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: stock-api
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    restart: unless-stopped

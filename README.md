@@ -97,6 +97,24 @@ I am a passionate Data Engineer with experience in designing, building, and main
 
 ---
 
+### Project 4: NYSE Stock Price Prediction API
+**Description:** Production-ready FastAPI application that predicts S&P 500 stock close prices using XGBoost models trained on the NYSE Kaggle dataset. Supports multiple prediction horizons from 1 day to 1 year, with 19 engineered technical indicators per stock. Features async endpoints, API key authentication, rate limiting, and two Docker deployment strategies — full retrain on build or fast deploy with pre-trained models.
+
+**Technologies:** Python, XGBoost, FastAPI, scikit-learn, joblib, pandas, Docker, Docker Compose
+
+**Key Features:**
+- 6 XGBoost regressors (one per horizon: `1d`, `7d`, `1m`, `3m`, `6m`, `1y`) with high accuracy (R² up to 0.9988)
+- 19 engineered technical indicators: SMA/EMA ratios, MACD, RSI, volatility, volume, price returns, lag features
+- API key authentication via `X-API-Key` header with rate limiting (10 req/min per key, configurable)
+- Pydantic v2 request/response validation with enum horizon + ticker constraints
+- Two Docker strategies: **Strategy A** (prebuilt — ~2 min build using saved models) and **Strategy B** (full retrain — ~10 min, bakes fresh models into image)
+- Structured logging, `/health` check endpoint, `/stocks` ticker list, and `/predict` endpoint
+- Auto-generated Swagger UI at `/docs`
+
+**[View Project →](./deploy-ai-fastapi)**
+
+---
+
 ## 📫 Contact
 
 - **LinkedIn:** [linkedin.com/in/ridwannulloh](https://linkedin.com/in/ridwannulloh)

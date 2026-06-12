@@ -36,3 +36,6 @@ DOCKER_README.md
 
 # Logs
 *.log
+
+# Claude
+CLAUDE.md

@@ -1,0 +1,10 @@
+data/
+lakehouse/
+logs/
+tests/
+.git/
+__pycache__/
+*.pyc
+.pytest_cache/
+.env
+README.md

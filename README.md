@@ -115,6 +115,24 @@ I am a passionate Data Engineer with experience in designing, building, and main
 
 ---
 
+### Project 5: FraudLens Lakehouse — Financial Fraud Detection
+**Description:** Live-demonstrable financial fraud detection pipeline on a Medallion lakehouse (Bronze → Silver → Gold). Airflow orchestrates PySpark jobs that write Delta Lake tables to MinIO (S3-compatible object storage), detecting mobile-money fraud in PaySim-style transaction data with an explainable rule-based risk score — **91% precision / 87% F1**, evaluated honestly against labels in a dedicated Gold table. Fully local: no cluster, no cloud account, no API keys. The DAG triggers itself on startup — one `docker compose up` and the lakehouse builds while you watch.
+
+**Technologies:** PySpark 3.5, Delta Lake 3.2, Apache Airflow, MinIO (S3), Docker Compose, pandas, pytest
+
+**Key Features:**
+- Medallion Architecture on a real object store: Delta tables written to MinIO via `s3a://`, browsable in the MinIO console
+- Seeded PaySim-schema data generator — credential-free, fully reproducible, and the real 6.3M-row Kaggle dataset drops in unchanged
+- Silver-layer behavioural feature engineering: full balance drain, stale mule-account balances, time-of-day patterns
+- Four Gold analytics tables: fraud exposure by channel, hourly fraud patterns (01:00–06:00 concentration), ranked high-risk account review queue, and detection precision/recall/F1
+- Explainable rule-based detector (no black box) — weighted risk score with labels used only for evaluation, never as input
+- Spark jars pre-resolved at Docker build time — first DAG run never touches Maven
+- pytest suite runs without Docker: Spark `local[1]` mode with Delta tables in a tmp directory
+
+**[View Project →](./fraudlens-lakehouse)**
+
+---
+
 ## 📫 Contact
 
 - **LinkedIn:** [linkedin.com/in/ridwannulloh](https://linkedin.com/in/ridwannulloh)

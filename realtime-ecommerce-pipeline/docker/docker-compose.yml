@@ -1,0 +1,192 @@
+# ─────────────────────────────────────────────────────────────────────────
+# Full local stack: infrastructure + the Python pipeline app services.
+#
+#   docker compose up --build
+#
+# Brings up Kafka + MinIO + Flink cluster, then builds one app image and runs:
+#   3 producers → bronze-sink (→ MinIO Bronze) → batch loop (Silver → Gold)
+#
+# The PyFlink streaming jobs are not auto-started (they need a connector jar);
+# see the project README for how to run them against the Flink cluster.
+# ─────────────────────────────────────────────────────────────────────────
+
+# Shared definition for every app service (all run from the same built image).
+x-app: &app
+  build:
+    context: ..
+    dockerfile: docker/Dockerfile
+  image: realtime-ecommerce-app:latest
+  environment:
+    KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+    MINIO_ENDPOINT: http://minio:9000
+    MINIO_ACCESS_KEY: minioadmin
+    MINIO_SECRET_KEY: minioadmin
+    MINIO_BUCKET: ecommerce-lakehouse
+  restart: unless-stopped
+
+services:
+  # ── Zookeeper ──────────────────────────────────────────────
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    hostname: zookeeper
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+
+  # ── Kafka Broker ───────────────────────────────────────────
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    hostname: kafka
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+      - "9101:9101"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+    healthcheck:
+      test: ["CMD", "kafka-broker-api-versions", "--bootstrap-server", "localhost:9092"]
+      interval: 10s
+      timeout: 10s
+      retries: 12
+      start_period: 20s
+
+  # ── Kafka UI ───────────────────────────────────────────────
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    depends_on:
+      - kafka
+    ports:
+      - "8080:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
+
+  # ── MinIO (local S3-compatible storage) ───────────────────
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_data:/data
+
+  # ── MinIO bucket init ──────────────────────────────────────
+  # Waits for MinIO to accept connections, then creates the lakehouse bucket.
+  # bronze/silver/gold are key prefixes within this bucket, not separate buckets.
+  minio-init:
+    image: minio/mc:latest
+    container_name: minio-init
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      until mc alias set local http://minio:9000 minioadmin minioadmin && mc ls local >/dev/null 2>&1; do
+        echo 'waiting for minio...'; sleep 2;
+      done;
+      mc mb --ignore-existing local/ecommerce-lakehouse;
+      echo 'Bucket ready: ecommerce-lakehouse';
+      "
+
+  # ── Flink JobManager ──────────────────────────────────────
+  flink-jobmanager:
+    image: flink:1.18-scala_2.12-java11
+    container_name: flink-jobmanager
+    ports:
+      - "8081:8081"
+    command: jobmanager
+    environment:
+      - |
+        FLINK_PROPERTIES=
+        jobmanager.rpc.address: flink-jobmanager
+        state.backend: filesystem
+        state.checkpoints.dir: file:///tmp/flink-checkpoints
+
+  # ── Flink TaskManager ─────────────────────────────────────
+  flink-taskmanager:
+    image: flink:1.18-scala_2.12-java11
+    container_name: flink-taskmanager
+    depends_on:
+      - flink-jobmanager
+    command: taskmanager
+    environment:
+      - |
+        FLINK_PROPERTIES=
+        jobmanager.rpc.address: flink-jobmanager
+        taskmanager.numberOfTaskSlots: 4
+
+  # ── App: Producers ─────────────────────────────────────────
+  order-producer:
+    <<: *app
+    container_name: order-producer
+    depends_on:
+      kafka:
+        condition: service_healthy
+    command: python producers/order_producer.py
+
+  inventory-producer:
+    <<: *app
+    container_name: inventory-producer
+    depends_on:
+      kafka:
+        condition: service_healthy
+    command: python producers/inventory_producer.py
+
+  clickstream-producer:
+    <<: *app
+    container_name: clickstream-producer
+    depends_on:
+      kafka:
+        condition: service_healthy
+    command: python producers/clickstream_producer.py
+
+  # ── App: Bronze sink (Kafka → MinIO Bronze) ───────────────
+  bronze-sink:
+    <<: *app
+    container_name: bronze-sink
+    depends_on:
+      kafka:
+        condition: service_healthy
+      minio-init:
+        condition: service_completed_successfully
+    command: python consumers/bronze_sink.py
+
+  # ── App: Batch pipeline loop (Bronze → Silver → Gold) ─────
+  # Runs the two batch stages every 120s. In production this cadence is the
+  # job of the Airflow DAG (pipelines/airflow_dag.py); the loop keeps the
+  # one-command demo self-contained without standing up Airflow.
+  batch-pipeline:
+    <<: *app
+    container_name: batch-pipeline
+    depends_on:
+      kafka:
+        condition: service_healthy
+      minio-init:
+        condition: service_completed_successfully
+    command: >
+      sh -c "while true; do
+               echo '[BATCH] bronze_to_silver...';
+               python pipelines/bronze_to_silver.py || true;
+               echo '[BATCH] silver_to_gold...';
+               python pipelines/silver_to_gold.py || true;
+               echo '[BATCH] sleeping 120s'; sleep 120;
+             done"
+
+volumes:
+  minio_data:

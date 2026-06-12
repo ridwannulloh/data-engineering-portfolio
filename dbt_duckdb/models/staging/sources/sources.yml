@@ -1,0 +1,70 @@
+version: 2
+
+sources:
+  - name: raw
+    description: >
+      Raw transactional data emulating the Bronze/ODS layer. In the production
+      pipeline this is landed by AWS DMS / COPY from S3; here it is loaded from
+      CSV seeds (seeds/raw/) so the project runs end-to-end on DuckDB.
+      Do not transform here.
+    schema: raw
+    loader: dbt_seed
+    loaded_at_field: _dms_timestamp
+    freshness:
+      warn_after: { count: 6, period: hour }
+      error_after: { count: 24, period: hour }
+
+    tables:
+      - name: orders
+        description: Raw order transactions from the source database.
+        columns:
+          - name: order_id
+            description: Primary key — unique order identifier.
+            tests:
+              - unique
+              - not_null
+          - name: customer_id
+            description: FK to customers.
+            tests:
+              - not_null
+          - name: product_id
+            description: FK to products.
+            tests:
+              - not_null
+          - name: order_status
+            description: Current status of the order.
+            tests:
+              - accepted_values:
+                  values: ["pending", "confirmed", "shipped", "delivered", "cancelled"]
+          - name: created_at
+            description: Order creation timestamp in UTC (converted to WIB in staging).
+            tests:
+              - not_null
+          - name: total_amount
+            description: Order total in local currency.
+
+      - name: customers
+        description: Customer master data replicated from source CRM.
+        columns:
+          - name: customer_id
+            tests:
+              - unique
+              - not_null
+          - name: email
+            tests:
+              - unique
+              - not_null
+          - name: country_code
+            tests:
+              - not_null
+
+      - name: products
+        description: Product catalog from source ERP system.
+        columns:
+          - name: product_id
+            tests:
+              - unique
+              - not_null
+          - name: category
+            tests:
+              - not_null

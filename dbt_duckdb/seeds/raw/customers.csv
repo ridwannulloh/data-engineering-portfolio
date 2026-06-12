@@ -1,0 +1,13 @@
+customer_id,email,country_code,first_name,last_name,customer_tier,registered_at,_dms_timestamp
+C001,budi.wijaya1@example.com,MY,Budi,Wijaya,1,2024-04-29 06:00:00,2026-06-12 05:52:00
+C002,citra.pratama2@example.com,SG,Citra,Pratama,2,2024-01-15 06:00:00,2026-06-12 05:24:00
+C003,dewi.lestari3@example.com,TH,Dewi,Lestari,1,2025-06-29 06:00:00,2026-06-12 05:42:00
+C004,eko.halim4@example.com,PH,Eko,Halim,3,2024-03-22 06:00:00,2026-06-12 04:46:00
+C005,fitri.saputra5@example.com,VN,Fitri,Saputra,3,2025-11-15 06:00:00,2026-06-12 05:01:00
+C006,gilang.nugroho6@example.com,IN,Gilang,Nugroho,1,2026-01-11 06:00:00,2026-06-12 05:44:00
+C007,hana.kusuma7@example.com,AU,Hana,Kusuma,1,2025-07-04 06:00:00,2026-06-12 04:51:00
+C008,indra.hartono8@example.com,US,Indra,Hartono,1,2024-06-06 06:00:00,2026-06-12 04:44:00
+C009,joko.permata9@example.com,GB,Joko,Permata,3,2025-07-24 06:00:00,2026-06-12 04:32:00
+C010,kiki.yusuf10@example.com,DE,Kiki,Yusuf,3,2024-02-25 06:00:00,2026-06-12 05:02:00
+C011,lina.rahmawati11@example.com,NL,Lina,Rahmawati,2,2025-07-02 06:00:00,2026-06-12 04:40:00
+C012,mia.santoso12@example.com,ID,Mia,Santoso,1,2025-05-04 06:00:00,2026-06-12 05:35:00

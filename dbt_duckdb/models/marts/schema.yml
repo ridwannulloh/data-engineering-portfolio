@@ -1,0 +1,60 @@
+version: 2
+
+models:
+  - name: mart_orders
+    description: >
+      Wide denormalised orders fact table for BI consumption.
+      Joins orders, customers, products and lookup seeds from staging.
+      One row per order.
+    columns:
+      - name: order_key
+        description: MD5 surrogate key on order_id.
+        tests:
+          - unique
+          - not_null
+      - name: order_id
+        tests:
+          - unique
+          - not_null
+      - name: order_status
+        tests:
+          - accepted_values:
+              values: ["pending", "confirmed", "shipped", "delivered", "cancelled"]
+      - name: customer_id
+        tests:
+          - not_null
+      - name: product_id
+        tests:
+          - not_null
+      - name: order_date_wib
+        tests:
+          - not_null
+      - name: total_amount
+        description: Order total in source currency.
+        tests:
+          - non_negative
+      - name: completed_revenue
+        description: Revenue counted only for revenue-bearing statuses; 0 otherwise.
+        tests:
+          - non_negative
+
+  - name: mart_customer_summary
+    description: >
+      Customer-grain aggregation with lifetime revenue, order counts,
+      and RFM-style recency segmentation. One row per customer.
+    columns:
+      - name: customer_id
+        tests:
+          - unique
+          - not_null
+      - name: lifetime_revenue
+        tests:
+          - not_null
+          - non_negative
+      - name: total_orders
+        tests:
+          - non_negative
+      - name: recency_segment
+        tests:
+          - accepted_values:
+              values: ["active", "at_risk", "lapsing", "churned"]

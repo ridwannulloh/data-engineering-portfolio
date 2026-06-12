@@ -1,0 +1,31 @@
+services:
+  # Default service: builds the whole warehouse (seed -> run -> test).
+  #   docker compose up --build
+  dbt:
+    build: .
+    image: portfolio-dbt-duckdb
+    environment:
+      DBT_DUCKDB_PATH: /app/warehouse/portfolio.duckdb
+    volumes:
+      # Live-mount the project so model edits don't require a rebuild,
+      # and persist the warehouse + target artifacts on the host.
+      - ./:/app
+      - dbt_warehouse:/app/warehouse
+    command: ["dbt", "build"]
+
+  # On-demand docs site:  docker compose run --rm --service-ports docs
+  docs:
+    build: .
+    image: portfolio-dbt-duckdb
+    profiles: ["docs"]
+    environment:
+      DBT_DUCKDB_PATH: /app/warehouse/portfolio.duckdb
+    volumes:
+      - ./:/app
+      - dbt_warehouse:/app/warehouse
+    ports:
+      - "8080:8080"
+    command: ["sh", "-c", "dbt docs generate && dbt docs serve --host 0.0.0.0 --port 8080"]
+
+volumes:
+  dbt_warehouse:

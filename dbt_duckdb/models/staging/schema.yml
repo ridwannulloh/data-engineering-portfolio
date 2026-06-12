@@ -1,0 +1,62 @@
+version: 2
+
+models:
+  - name: stg_orders
+    description: >
+      Cleaned and type-cast order records from the ODS layer.
+      Timestamps converted to Asia/Jakarta (WIB, UTC+7).
+    columns:
+      - name: order_id
+        description: Unique order identifier.
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        tests:
+          - not_null
+      - name: product_id
+        tests:
+          - not_null
+      - name: order_status
+        tests:
+          - accepted_values:
+              values: ["pending", "confirmed", "shipped", "delivered", "cancelled"]
+      - name: total_amount
+        tests:
+          - not_null
+          - non_negative
+      - name: created_at_wib
+        description: Order creation time in WIB (Asia/Jakarta, UTC+7).
+        tests:
+          - not_null
+
+  - name: stg_customers
+    description: Cleaned customer master data with tier labels and lower-cased email.
+    columns:
+      - name: customer_id
+        tests:
+          - unique
+          - not_null
+      - name: email
+        tests:
+          - unique
+          - not_null
+      - name: country_code
+        tests:
+          - not_null
+      - name: customer_tier
+        tests:
+          - accepted_values:
+              values: ["bronze", "silver", "gold", "unknown"]
+
+  - name: stg_products
+    description: Product catalog cleaned from ERP source.
+    columns:
+      - name: product_id
+        tests:
+          - unique
+          - not_null
+      - name: unit_price
+        tests:
+          - not_null
+          - non_negative

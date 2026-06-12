@@ -1,0 +1,6 @@
+status_key,status_label,is_terminal,is_revenue
+pending,Pending,-,-
+confirmed,Confirmed,-,-
+shipped,Shipped,-,-
+delivered,Delivered,true,true
+cancelled,Cancelled,true,false

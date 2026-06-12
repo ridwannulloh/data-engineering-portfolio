@@ -1,0 +1,18 @@
+portfolio_duckdb:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      # Single-file embedded warehouse. Mounted to a volume in Docker so the
+      # built tables persist between `docker compose` runs.
+      path: "{{ env_var('DBT_DUCKDB_PATH', 'warehouse/portfolio.duckdb') }}"
+      schema: main
+      threads: 4
+
+    # `prod` differs only by thread count here — same engine, same file.
+    # In a real deployment you would point this at MotherDuck or a shared path.
+    prod:
+      type: duckdb
+      path: "{{ env_var('DBT_DUCKDB_PATH', 'warehouse/portfolio.duckdb') }}"
+      schema: main
+      threads: 8

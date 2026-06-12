@@ -1,0 +1,9 @@
+product_id,product_name,category,subcategory,unit_price,currency_code,is_active,_dms_timestamp
+P01,Aurora Wireless Earbuds,ELECTRONICS,AUDIO,59.9000,USD,true,2026-06-12 05:01:00
+P02,Nimbus Mechanical Keyboard,ELECTRONICS,PERIPHERALS,89.0000,USD,true,2026-06-12 05:12:00
+P03,Lumen 4K Webcam,ELECTRONICS,PERIPHERALS,74.5000,USD,true,2026-06-12 05:20:00
+P04,Terra Insulated Bottle,HOME,KITCHEN,24.0000,USD,true,2026-06-12 05:36:00
+P05,Drift Cotton Hoodie,APPAREL,OUTERWEAR,45.0000,USD,true,2026-06-12 05:28:00
+P06,Pulse Running Shoes,APPAREL,FOOTWEAR,119.0000,USD,true,2026-06-12 05:12:00
+P07,Glow Desk Lamp,HOME,LIGHTING,38.7500,USD,true,2026-06-12 05:42:00
+P08,Atlas Travel Backpack,ACCESSORIES,BAGS,95.0000,USD,true,2026-06-12 05:44:00

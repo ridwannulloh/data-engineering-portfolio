@@ -171,6 +171,24 @@ I am a passionate Data Engineer with experience in designing, building, and main
 
 ---
 
+### Project 8: Realtime CDC — MySQL → PostgreSQL
+**Description:** Log-based Change Data Capture pipeline that replicates an ecommerce database from MySQL to PostgreSQL in real time, with **no application code in the data path** — just connector configuration. Debezium tails the MySQL binary log and streams every row-level `INSERT` / `UPDATE` / `DELETE` into Kafka; the Debezium JDBC sink connector consumes the change envelope and upserts (and deletes) into PostgreSQL, auto-creating the target tables from the inferred schema. Designed to plug into **already-running** MySQL and PostgreSQL Docker containers — the stack only brings up Kafka, Kafka Connect, and Kafka UI, reaching the databases via the host. Seed four related tables, then add/update/delete rows yourself and watch them land in PostgreSQL within seconds.
+
+**Technologies:** Debezium 2.7, Apache Kafka, Kafka Connect, MySQL 8 (binlog/ROW), PostgreSQL 16, Kafka UI, Docker Compose
+
+**Key Features:**
+- Config-only data path — Debezium MySQL **source** connector + Debezium **JDBC sink** connector; zero consumer code to write or maintain
+- Native Debezium-envelope sink: `upsert` semantics, tombstone-driven **deletes** (`delete.enabled`), and `schema.evolution` with `auto.create` for target tables (no DDL to hand-write)
+- Connects to **existing** MySQL/PostgreSQL containers via `host.docker.internal` — the project stands up only the Kafka/Connect stack, not the databases
+- Self-contained ecommerce schema (`customers`, `products`, `orders`, `order_items`) seeded with ~20 starter rows; you drive further changes to see CDC live
+- Race-free bring-up: registration script registers the source first, waits for the change topics to exist, then registers the sink (avoids the empty-assignment cold-start trap)
+- Full observability via Kafka UI at `http://localhost:8080` (topics + Connect status)
+- Verified end-to-end: initial snapshot, then live `INSERT`/`UPDATE`/`DELETE` replication confirmed in PostgreSQL
+
+**[View Project →](./cdc-mysql-postgres)**
+
+---
+
 ## 📫 Contact
 
 - **LinkedIn:** [linkedin.com/in/ridwannulloh](https://linkedin.com/in/ridwannulloh)

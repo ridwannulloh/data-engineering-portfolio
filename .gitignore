@@ -16,6 +16,8 @@ dist/
 *.json
 !deploy.yml
 !package.json
+# Kafka Connect connector configs for the CDC project (local-demo creds only)
+!cdc-mysql-postgres/connectors/*.json
 
 # IDE
 .vscode/

@@ -1,0 +1,24 @@
+{
+  "name": "postgres-sink",
+  "config": {
+    "connector.class": "io.debezium.connector.jdbc.JdbcSinkConnector",
+    "tasks.max": "1",
+
+    "topics.regex": "dbserver1\\.ecommerce\\..*",
+
+    "connection.url": "jdbc:postgresql://host.docker.internal:5432/ecommerce",
+    "connection.username": "postgres",
+    "connection.password": "postgres",
+
+    "insert.mode": "upsert",
+    "primary.key.mode": "record_key",
+    "delete.enabled": "true",
+    "schema.evolution": "basic",
+    "auto.create": "true",
+
+    "transforms": "route",
+    "transforms.route.type": "org.apache.kafka.connect.transforms.RegexRouter",
+    "transforms.route.regex": "dbserver1\\.ecommerce\\.(.*)",
+    "transforms.route.replacement": "$1"
+  }
+}

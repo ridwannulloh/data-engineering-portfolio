@@ -1,0 +1,9 @@
+.env
+*credentials*.txt
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+dist/
+reports/

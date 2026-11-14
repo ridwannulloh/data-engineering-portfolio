@@ -189,6 +189,25 @@ I am a passionate Data Engineer with experience in designing, building, and main
 
 ---
 
+### Project 9: NYC Taxi Analytics on ClickHouse Cloud
+**Description:** Batch ELT pipeline that loads the official NYC TLC Yellow Taxi trip records (Jan 2024 onward, ~123M source rows) into ClickHouse Cloud and serves them through a self-hosted web dashboard. ClickHouse reads each monthly Parquet file directly from the TLC CDN, every row gets an explicit data-quality flag, and each month is published as an atomic snapshot with `REPLACE PARTITION`, so reloads never duplicate data. A refreshable materialized view keeps a daily aggregate (day × pickup zone × payment type), and a verification step checks every aggregate group against the detail query before reporting benchmark numbers.
+
+**Technologies:** ClickHouse Cloud, Python 3.12, clickhouse-connect, SQL, Chart.js, Docker, uv, pytest
+
+**Key Features:**
+- Server-side Parquet ingestion via `url()`: Python only coordinates; resumable range loader that reads the TLC catalog and skips months already loaded
+- Atomic monthly snapshots (`REPLACE PARTITION`) and a refreshable materialized view for the mart; failed imports never publish partial data
+- Every source row kept with a `quality_issue` reason, so excluded rows (refunds, negative durations, out-of-month pickups) are fully accounted for
+- `taxi-demo` verifies the mart group-by-group against detail queries, then reports warm query timings, rows/bytes read, column compression, and index pruning
+- Web dashboard service (stdlib HTTP, no extra dependencies): KPI cards with sparklines and month-over-month change, trends with 7-day average, year-over-year, day-of-week, top pickup zones by borough, payment mix, and data-quality coverage
+- Parameterized dashboard SQL (`{start:Date}`/`{end:Date}`) shared by the service and the ClickHouse SQL Console; credentials never reach the browser
+- Synthetic event pipeline showing ClickHouse ingest patterns: batched idempotent inserts, ReplacingMergeTree dedup, watermark-based incremental transforms
+- Dockerized dashboard, unit tests without a server, and an opt-in live integration test
+
+**[View Project →](./clickhouse-etl)**
+
+---
+
 ## 📫 Contact
 
 - **LinkedIn:** [linkedin.com/in/ridwannulloh](https://linkedin.com/in/ridwannulloh)

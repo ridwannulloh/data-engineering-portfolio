@@ -1,0 +1,14 @@
+.env
+.env.*
+!.env.example
+*credentials*
+.venv/
+.git/
+**/__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+reports/
+dist/
+docs/
+tests/

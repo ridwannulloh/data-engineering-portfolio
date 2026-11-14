@@ -1,0 +1,9 @@
+<!--
+  ClickHouse Cloud (SharedMergeTree) deduplicates retried insert blocks by default.
+  Plain MergeTree does not, so turn it on locally to match Cloud behaviour.
+-->
+<clickhouse>
+    <merge_tree>
+        <non_replicated_deduplication_window>1000</non_replicated_deduplication_window>
+    </merge_tree>
+</clickhouse>

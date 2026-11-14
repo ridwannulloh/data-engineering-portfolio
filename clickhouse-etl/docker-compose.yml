@@ -1,0 +1,29 @@
+# `clickhouse`: optional local server for iterating without spending Cloud credits (`make up`).
+# `dashboard`: the web dashboard, only started with its profile (`make dashboard-docker`).
+services:
+  clickhouse:
+    image: clickhouse/clickhouse-server:25.8
+    ports:
+      - "8123:8123"
+      - "9000:9000"
+    environment:
+      CLICKHOUSE_USER: default
+      CLICKHOUSE_PASSWORD: localdev
+      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: 1
+    volumes:
+      - ./docker/clickhouse/config.d:/etc/clickhouse-server/config.d:ro
+      - ch-data:/var/lib/clickhouse
+    ulimits:
+      nofile: { soft: 262144, hard: 262144 }
+
+  dashboard:
+    profiles: ["dashboard"]
+    build: .
+    env_file: .env
+    # Published on this machine only: the dashboard has no login.
+    ports:
+      - "127.0.0.1:8050:8050"
+    restart: unless-stopped
+
+volumes:
+  ch-data:
